@@ -1,0 +1,18 @@
+{% extends 'default.html' %}
+
+{% block title %}
+Поиск
+{% endblock title %}
+
+{% block content %}
+    <h2>Поиск статей</h2>
+    <h3>{{ time_in|date:'d.m.Y' }}</h3>
+    {% for post in news %}
+     <div>
+     {{ post.author }}
+     {{ post.title }}
+     {{ post.created_at|date:'d.m.Y' }}
+     {{ post.title|truncatechars:20 }}
+     </div>
+    {% endfor %}
+{% endblock content %}
