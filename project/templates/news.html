@@ -17,6 +17,7 @@ Post
                 <td> Заглавие</td>
                 <td> Дата</td>
                 <td> Текст</td>
+                <td>Тип поста</td>
             </tr>
 
             {% for post in posts %}
@@ -24,6 +25,7 @@ Post
                 <td>{{post.title|censor}}</td>
                 <td>{{post.time_create|date:'d M Y'}}</td>
                 <td>{{post.content|censor|truncatechars:20}}</td>
+                <td> {{post.post_type}}</td>
             </tr>
             {% endfor %}
         </table>

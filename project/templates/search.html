@@ -1,22 +1,22 @@
 {% extends 'flatpages/default.html' %}
+{% load custom_filters %}
 
 {% block title %}
 Search
 {% endblock title %}
 
 {% block content %}
-    <h2>Search in posts</h2>
-    <h3>{{ time_in|date:'d.m.Y' }}</h3>
+    <h2>Поиск по новостям</h2>
     <form action="" method="get">
         {{ filterset.form.as_p }}
-        <input type="submit" value="Search"/>
+        <input type="submit" value="Найти"/>
     </form>
     {% for post in search %}
      <div>
-     {{ post.author }}
-     {{ post.title }}
+     {{ post.author.user.username }}
+     {{ post.title|censor}}
      {{ post.time_create|date:'d.m.Y' }}
-     {{ post.content|truncatechars:20 }}
+     {{ post.content|censor|truncatechars:20 }}
      </div>
     {% endfor %}
 {% endblock content %}
