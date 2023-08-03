@@ -1,9 +1,10 @@
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
-from .forms import PostForm
+from .forms import PostForm, UserForm
 from .filters import PostFilter
 from django.shortcuts import redirect
 from django.contrib.auth import logout
@@ -33,6 +34,7 @@ class PostList(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         # Добавляем в контекст объект фильтрации.
         context['filterset'] = self.filterset
+        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
         return context
 
 class NewsSearch(LoginRequiredMixin, ListView):
@@ -60,7 +62,7 @@ class NewsSearch(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         # Добавляем в контекст объект фильтрации.
         context['filterset'] = self.filterset
-        context['is_not_author'] = not self.request.user.groups.filter(name='authors').exists()
+        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
         return context
 
 class PostDetail(LoginRequiredMixin, DetailView):
@@ -113,3 +115,21 @@ def upgrade_me(request):
     if not request.user.groups.filter(name='authors').exists():
         author_group.user_set.add(user)
     return redirect('/news/')
+
+class ProfileDetail(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'user.html'
+    context_object_name = 'user'
+
+class ProfileUpdate(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'user_update.html'
+    context_object_name = 'user'
+    form_class = UserForm
+    success_url = reverse_lazy('news')
+
+class ProfileDelete(LoginRequiredMixin, DeleteView):
+    model = User
+    template_name = 'user_delete.html'
+    context_object_name = 'user'
+    success_url = reverse_lazy('news')

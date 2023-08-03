@@ -26,15 +26,19 @@
        <div class="collapse navbar-collapse" id="navbarResponsive">
            <ul class="navbar-nav ml-auto">
                <li class="nav-item active">
-                   <a class="nav-link" href="#">Home
+                   <a class="nav-link" href="{% url 'news' %}">Home
                        <span class="sr-only">(current)</span>
                    </a>
                </li>
                <li class="nav-item"><a class="nav-link" href="/news/logout">Logout</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/news/create">NewsCreate</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/news/articles/create">ArticleCreate</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/accounts/signup">SignUp</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/accounts/login">SignIn</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'news_create' %}">Cоздать новость </a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'articles_create' %}">Создать статью</a></li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'profile' request.user.pk %}">Профиль</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}">Регистрация</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">Войти</a></li>
+                        {% endif %}
                <li class="nav-item">
                    <a class="nav-link" href="/about/">About</a>
                </li>

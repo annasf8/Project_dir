@@ -12,7 +12,7 @@ Post
     <h1>Все посты, количество: {{ posts|length }}</h1>
     {% if posts %}
     <h4>Добро пожаловать, {{ request.user }}</h4>
-    {% if is_not_author %}
+    {% if not is_author %}
     <button> <a href="upgrade/"> Хочу стать автором!</a> </button>
     {% endif %}
     <h4>
