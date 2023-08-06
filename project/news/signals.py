@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 
 from project.settings import SITE_URL, DEFAULT_FROM_EMAIL
-from .models import PostCategory
+from .models import Post, PostCategory
 
 
 def send_notifications(preview, pk, title, subscribers):
@@ -27,9 +27,9 @@ def send_notifications(preview, pk, title, subscribers):
     msg.send()
 
 
-@receiver(m2m_changed, sender=PostCategory)
+@receiver(m2m_changed, sender=Post.categories.through)
 def notify_about_new_post(sender, instance, **kwargs):
-    if kwargs['action'] == 'news_create':
+    if kwargs['action'] == 'post_add':
         categories = instance.categories.all()
         subscribers: list[str] = []
         for category in categories:
@@ -37,3 +37,8 @@ def notify_about_new_post(sender, instance, **kwargs):
             subscribers = [s.email for s in subscribers]
 
         send_notifications(instance.preview(), instance.pk, instance.title, subscribers)
+
+# @receiver(m2m_changed, sender=Post.categories.through)
+# def notify_subscribers(sender, instance, action, **kwargs):
+#     if action == 'post_add':
+#         print ('Сигнал сработал')
