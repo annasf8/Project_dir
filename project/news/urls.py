@@ -1,6 +1,6 @@
 from django.urls import path
 # Импортируем созданные нами представления
-from .views import PostList, PostDetail, NewsSearch, PostCreate, PostUpdate, PostDelete,logout_user, upgrade_me, ProfileDetail, ProfileUpdate, ProfileDelete
+from .views import PostList, PostDetail, NewsSearch, PostCreate, PostUpdate, PostDelete,logout_user, upgrade_me, ProfileDetail, ProfileUpdate, ProfileDelete,CategoryListView, subscribe
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -25,4 +25,6 @@ urlpatterns = [
    path('profile/<int:pk>/', ProfileDetail.as_view(), name='profile'),
    path('profile/<int:pk>/update/', ProfileUpdate.as_view(), name='profile_update'),
    path('profile/<int:pk>/delete/', ProfileDelete.as_view(), name='profile_delete'),
+   path('categories/<int:pk>', CategoryListView.as_view(), name='category_list'),
+   path('categories/<int:pk>/subscribe',subscribe, name='subscribe')
 ]

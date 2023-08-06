@@ -6,12 +6,12 @@ from django.contrib.auth.models import Group, User
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['author', 'post_type','title', 'content']
+        fields = ['author', 'post_type', 'title', 'categories', 'content']
 
 class UserForm(forms.ModelForm):
     class Meta:
-        model=User
-        fields=['username', 'email', 'first_name', 'last_name']
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
 class BasicSignupForm(SignupForm):
     def save(self, request):
         user = super(BasicSignupForm, self).save(request)

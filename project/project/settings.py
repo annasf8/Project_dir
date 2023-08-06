@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'fpages',
     'simpleapp',
-    'news',
+    'news.apps.NewsConfig',
     'django_filters',
     'allauth',
     'allauth.account',
@@ -151,4 +151,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
-
+SITE_URL = 'http://127.0.0.1:8000/'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'sendmailsend'
+EMAIL_HOST_PASSWORD = 'obpczgafsglrlnml'
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'sendmailsend@yandex.ru'

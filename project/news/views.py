@@ -3,10 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from .models import Post, Category
 from .forms import PostForm, UserForm
-from .filters import PostFilter
-from django.shortcuts import redirect
+from .filters import PostFilter, FilterSet
+from django.shortcuts import redirect,  get_object_or_404, render
 from django.contrib.auth import logout
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
@@ -133,3 +133,28 @@ class ProfileDelete(LoginRequiredMixin, DeleteView):
     template_name = 'user_delete.html'
     context_object_name = 'user'
     success_url = reverse_lazy('news')
+
+class CategoryListView (ListView,FilterSet):
+    model = Post
+    template_name = 'category_list.html'
+    context_object_name = 'category_news_list'
+
+    def get_queryset(self):
+        self.categories = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(categories=self.categories).order_by('-time_create')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_not_subscriber"] = self.request.user not in self.categories.subscribers.all()
+        context['category'] = self.categories
+        return context
+
+@login_required
+def subscribe(request, pk):
+    user =request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+
+    message = 'Вы подписаны на рассылку постов категории'
+    return render(request,'subscribe.html',{'category': category,'message': message})
