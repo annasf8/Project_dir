@@ -31,7 +31,12 @@ Post
                 <td>{{post.title|censor}}</td>
                 <td>{{post.time_create|date:'d M Y'}}</td>
                 <td>{{post.content|censor|truncatechars:20}}</td>
-                <td> {{post.post_type}}</td>
+                <td> {%if post.post_type == 'AT'%}
+                    Статья
+                    {%elif post.post_type == 'NW'%}
+                    Новость
+                    {% endif%}
+                </td>
                 <td>{% for category in post.categories.all %}
                     <a href="{% url 'category_list' category.id%}"> {{ category}} </a>
                 {% endfor %}

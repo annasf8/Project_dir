@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 
 from project.settings import SITE_URL, DEFAULT_FROM_EMAIL
-from .models import Post, PostCategory
+from .models import Post
 
 
 def send_notifications(preview, pk, title, subscribers):

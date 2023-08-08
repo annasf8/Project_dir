@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post, Category
+from .models import Author, Post, Category
 from .forms import PostForm, UserForm
 from .filters import PostFilter, FilterSet
 from django.shortcuts import redirect,  get_object_or_404, render
