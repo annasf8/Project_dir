@@ -38,10 +38,11 @@ def send_news_to_sub(pk):
 
 @shared_task
 def send_last_weekly_list():
-    start_date = datetime.today() - timedelta(days=6)
+    today = datetime.datetime.now()
+    start_date = today - datetime.timedelta(days=7)
     last_week_posts = Post.objects.filter(time_create__gt=start_date)
     for name in Category.objects.all():
-        post_list = last_week_posts.filter(category=name)
+        post_list = last_week_posts.filter(categories=name)
         if post_list:
             subscribers = name.subscribers.values('email')
             recipients = []
@@ -51,14 +52,14 @@ def send_last_weekly_list():
                 'daily_post.html',
                 {
                     'link': settings.SITE_URL,
-                    'posts': posts,
+                    'posts': last_week_posts,
                 }
             )
 
     msg = EmailMultiAlternatives(
         subject= f' Посты за прошедшую неделю',
         body=' ',
-        from_email='sendmailsend@eandex.ru',
+        from_email=DEFAULT_FROM_EMAIL,
         to=recipients
         )
     msg.attach_alternative(html_content, 'text/html')
