@@ -10,6 +10,7 @@ from django.shortcuts import redirect,  get_object_or_404, render
 from django.contrib.auth import logout
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from news.tasks import send_news_to_sub
 
 class PostList(LoginRequiredMixin, ListView):
     model = Post
@@ -85,8 +86,11 @@ class PostCreate(PermissionRequiredMixin,CreateView):
         post = form.save(commit=False)
         if self.request.path == '/news/articles/create/':
             post.post_type = 'AT'
-        post.save()
-        return super().form_valid(form)
+        elif self.request.path == '/news/create/':
+            post.post_type = 'NW'
+            post.save()
+            send_news_to_sub.delay(post.pk)
+            return super().form_valid(form)
 
 
 class PostUpdate(PermissionRequiredMixin,UpdateView):
