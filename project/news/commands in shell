@@ -1,0 +1,51 @@
+python manage.py makemigrations
+python manage.py migrate
+python manage.py shell
+from news.models import *
+1. user_1 = User.objects.create_user(username = 'Username1')
+user_2 = User.objects.create_user(username = 'Username2')
+2. author_1 = Author.objects.create(user=user_1)
+author_2 = Author.objects.create(user=user_2)
+3. category_1 = Category.objects.create(name ='Погода')
+category_2 = Category.objects.create(name ='Политика')
+category_3 = Category.objects.create(name ='Экономика')
+category_4= Category.objects.create(name ='Наука')
+4. post_1 = Post.objects.create(author=author_1, post_type ='AT', title = 'Title1', content = 'Content1')
+post_2 = Post.objects.create(author=author_2, post_type ='AT', title = 'Title2', content = 'Content2')
+post_3 = Post.objects.create(author=author_1, post_type ='NW', title = 'Title3', content = 'Content3')
+5. post_1.categories.add(category_2, category_3)
+post_1.save()
+post_2.categories.add(category_1, category_4)
+post_2.save()
+post_3.categories.add(category_3, category_4)
+post_3.save()
+post_3.categories.all()
+post_3.author
+6. comment_1=Comment.objects.create(post=post_1, user=user_1, content='Хорошо')
+comment_2=Comment.objects.create(post=post_2,user=user_2, content='Супер')
+comment_3=Comment.objects.create(post=post_3,user=user_1, content='Не очень')
+comment_4=Comment.objects.create(post=post_1,user=user_2, content='Супер')
+7. post_1.like()
+post_1.rating
+post_2.dislike()
+post_2.rating
+post_3.like()
+post_3.rating
+comment_1.like()
+comment_1.rating
+comment_2.like()
+comment_2.rating
+8. author_1.rating
+ author_1.update_rating()
+author_1.rating
+author_2.rating
+author_2.update_rating()
+author_2.rating
+9. best_user =Author.objects.order_by('-rating').values('user__username', 'rating').first()
+best_user
+10. best_post=Post.objects.order_by('-rating').values('time_create', 'author__user__username', 'rating', 'title').first()
+best_post
+best_post_preview=Post.objects.order_by('-rating').first()
+best_post_preview.preview()
+11. comments = Comment.objects.filter(post=best_post_preview)
+comments

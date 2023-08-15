@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.core.cache import cache
 
 
 class Author(models.Model):  #
@@ -61,9 +62,9 @@ class Post(models.Model):  # статьи и новости, которые со
     def get_absolute_url(self):
         return reverse('news_detail', args=[str(self.pk)])
 
-    # def get_absolute_id(self):
-    #     return f'/news/{self.id}'
-
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'post-{self.pk}')
     def __str__(self):
         return self.content
 

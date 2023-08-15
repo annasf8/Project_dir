@@ -11,7 +11,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from news.tasks import send_news_to_sub
-
+from django.core.cache import cache # импортируем наш кэш
 class PostList(LoginRequiredMixin, ListView):
     model = Post
     ordering ='-time_create'
@@ -70,6 +70,15 @@ class PostDetail(LoginRequiredMixin, DetailView):
     model = Post
     template_name = 'news_1.html'
     context_object_name = 'post'
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+        # print('Cache used!')
+        if not obj:
+            # print('New cache object created!')
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
 class PostCreate(PermissionRequiredMixin,CreateView):
     # Указываем нашу разработанную форму
