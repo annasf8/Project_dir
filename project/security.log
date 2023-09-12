@@ -1,0 +1,1 @@
+WARNING 2023-09-12 20:15:34,427 log  Forbidden (CSRF token missing.): /news/create/
