@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Author, Post, Category
+from .models import Post, Category
 from .forms import PostForm, UserForm
 from .filters import PostFilter, FilterSet
 from django.shortcuts import redirect,  get_object_or_404, render
@@ -12,12 +12,18 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from news.tasks import send_news_to_sub
 from django.core.cache import cache # импортируем наш кэш
+from django.utils.translation import gettext as _
+from django.http.response import HttpResponse
+from django.utils import timezone
+from django.shortcuts import redirect
+import pytz
 class PostList(LoginRequiredMixin, ListView):
     model = Post
     ordering ='-time_create'
     template_name = 'news.html'
     context_object_name = 'posts'
     paginate_by = 10
+    form_class = PostForm
 
     def get_queryset(self):
         # Получаем обычный запрос
@@ -36,8 +42,20 @@ class PostList(LoginRequiredMixin, ListView):
         # Добавляем в контекст объект фильтрации.
         context['filterset'] = self.filterset
         context['is_author'] = self.request.user.groups.filter(name='authors').exists()
+        context['categories'] = Category.objects.all()
+        context['form'] = self.form_class()  # создаем экземпляр формы, чтобы передать в контекст
+        context['current_time'] = timezone.now()
+        context['timezones'] = pytz.common_timezones
+
         return context
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+        return super().get(request, *args, **kwargs)
 class NewsSearch(LoginRequiredMixin, ListView):
 
     model = Post
@@ -171,3 +189,20 @@ def subscribe(request, pk):
 
     message = 'Вы подписаны на рассылку постов категории'
     return render(request,'subscribe.html',{'category': category,'message': message})
+
+# class Index(PostList, ListView):
+#     def get(self, request):
+#         # . Translators: This message appears on the home page only
+#         models = Post.objects.all()
+#         context = {
+#             'models': models,
+#             'current_time': timezone.now(),
+#             'timezones': pytz.common_timezones  # добавляем в контекст все доступные часовые пояса
+#         }
+#         return HttpResponse(render(request, 'default.html', context))
+#
+#     #  по пост-запросу будем добавлять в сессию часовой пояс, который и будет обрабатываться написанным нами ранее middleware
+#
+#     def post(self, request):
+#         request.session['django_timezone'] = request.POST['timezone']
+#         return redirect('news')

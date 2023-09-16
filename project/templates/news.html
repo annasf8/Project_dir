@@ -1,28 +1,27 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
-
+{% load i18n %}
 {% load custom_filters %}
 <!-- Название у нас будет products -->
 {% block title %}
 Post
 {% endblock title %}
-
 <!-- В контенте на странице мы выводим все товары -->
 {% block content %}
-    <h1>Все посты, количество: {{ posts|length }}</h1>
+    <h1> {% trans "Все посты, количество:" %} {{ posts|length }}</h1>
     {% if posts %}
-    <h4>Добро пожаловать, {{ request.user }}</h4>
+    <h4>{% trans "Добро пожаловать," %} {{ request.user }}</h4>
     {% if not is_author %}
-    <button> <a href="upgrade/"> Хочу стать автором!</a> </button>
+    <button> <a href="upgrade/">{% trans "Хочу стать автором!" %}</a> </button>
     {% endif %}
     <h4>
         <table> <!-- Начинаем описывать таблицу -->
             <tr>
-                <td> Заглавие</td>
-                <td> Дата</td>
-                <td> Текст</td>
-                <td>Тип поста</td>
-                <td> Категория поста</td>
+                <td> {% trans "Заглавие" %} </td>
+                <td> {% trans "Дата" %} </td>
+                <td> {% trans "Текст" %}</td>
+                <td>{% trans "Тип поста" %}</td>
+                <td> {% trans "Категория поста" %}</td>
             </tr>
 
             </td>
@@ -45,7 +44,7 @@ Post
         </table>
     </h4>
     {% else %}
-    <h2>Новостей нет</h2>
+    <h2>{% trans "Новостей нет" %}</h2>
     {% endif %}
 
     {% if page_obj.has_previous %}

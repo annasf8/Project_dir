@@ -1,1 +1,4 @@
 WARNING 2023-09-12 20:15:34,427 log  Forbidden (CSRF token missing.): /news/create/
+WARNING 2023-09-15 20:54:48,582 log  Forbidden (CSRF token from POST incorrect.): /i18n/setlang/
+WARNING 2023-09-15 20:56:12,518 log  Forbidden (CSRF token from POST incorrect.): /i18n/setlang/
+WARNING 2023-09-15 21:55:40,453 log  Forbidden (CSRF token from POST incorrect.): /i18n/setlang/

@@ -1,5 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
+{% load i18n %}
+{% load tz %}
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -7,16 +9,63 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Bare - Start Bootstrap Template</title>
+        <style>
+        body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} darkcyan {% else %} powderblue {% endif %};}
+        </style>
 
         {% load static %}
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     </head>
     <body>
+   <form action="{% url 'set_language' %}" method="POST">
+       {% csrf_token %} <!-- Не забываем по csrf_token для POST
+    запросов -->
+        <input type="hidden" name="next" value="{{ redirect_to }}">
+
+        <select name="language" id="language">
+            <option value="none" hidden="">{% trans "Русский" %}</option>
+            {% get_available_languages as LANGUAGES %} <!-- получаем языки -->
+            {% get_language_info_list for LANGUAGES as languages %} <!-- Помещаем их в список languages -->
+            {% for language in languages %} <!-- Итерируясь по списку, выводим их название на языке пользователя и код -->
+                     <option value="{{ language.code }}"
+                    {% if language.code == LANGUAGE_CODE %}
+                    selected
+                    {% endif %}>
+                    {{ language.name_local }}
+                    </option>
+                    {% endfor %}
+                    </select>
+                    <input type="submit" value="set">
+                    </form>
+
+     {% get_current_timezone as TIME_ZONE %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="timezone">Time zone:</label>
+        <select name="timezone">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Set">
+    </form>
+
+    {{ TIME_ZONE }}
+    {{ current_time|timezone:TIME_ZONE }} <!-- Отображаем время в выбранном часовом поясе  -->
+
+    {% for model in models %}
+    <div class="model-class">
+        {{ model.name }}
+    </div>
+    {% endfor %}
+
+    </body>
+    <body>
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
    <div class="container">
-       <a class="navbar-brand" href="#">Django flatpages</a>
+       <a class="navbar-brand" href="#">{% trans "НОВОСТНОЙ ПОРТАЛ" %}</a>
        <button class="navbar-toggler" type="button" data-toggle="collapse"
                data-target="#navbarResponsive"
                aria-controls="navbarResponsive" aria-expanded="false"
@@ -26,24 +75,24 @@
        <div class="collapse navbar-collapse" id="navbarResponsive">
            <ul class="navbar-nav ml-auto">
                <li class="nav-item active">
-                   <a class="nav-link" href="{% url 'news' %}">Home
-                       <span class="sr-only">(current)</span>
+                   <a class="nav-link" href="{% url 'news' %}">{% trans "Домашняя" %}
+                       <span class="sr-only">{% trans "(главная)" %}</span>
                    </a>
                </li>
-               <li class="nav-item"><a class="nav-link" href="/news/logout">Logout</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'news_create' %}">Cоздать новость </a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'articles_create' %}">Создать статью</a></li>
+               <li class="nav-item"><a class="nav-link" href="/news/logout">{% trans "Выйти" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'news_create' %}">{% trans "Cоздать новость" %} </a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'articles_create' %}">{% trans "Создать статью" %}</a></li>
                         {% if request.user.is_authenticated %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'profile' request.user.pk %}">Профиль</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'profile' request.user.pk %}">{%trans "Профиль" %}</a></li>
                         {% else %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}">Регистрация</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">Войти</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}">{% trans "Регистрация" %}</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">{% trans "Войти" %}</a></li>
                         {% endif %}
                <li class="nav-item">
-                   <a class="nav-link" href="/about/">About</a>
+                   <a class="nav-link" href="/about/">{% trans "О нас" %}</a>
                </li>
                <li class="nav-item">
-                   <a class="nav-link" href="/contacts/">Contact</a>
+                   <a class="nav-link" href="/contacts/">{% trans "Контакты" %}</a>
                </li>
            </ul>
        </div>
